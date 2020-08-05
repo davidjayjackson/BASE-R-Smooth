@@ -1,0 +1,71 @@
+---
+title: 'Base R: Smoothing Methods'
+author: "David J Jackson"
+date: "8/4/2020"
+output: 
+  html_document: 
+    fig_width: 9
+    fig_height: 7
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+rm(list=ls())
+# EUP <-read.csv("../DATA/EU_top_10_pop..csv")
+# EUPOP <- subset(EUP,Population >=30000000)
+# EUPOP$Population <- as.factor(EUPOP$Population)
+EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-05.csv")
+EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
+EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
+ES <- subset(EUCOVID,geoId =="ES")
+```
+
+### Plot Spain's Daily Cases And Deaths
+
+```{r}
+plot(ES$dateRep,ES$cases,type="b",main="Spain's Daily Cases")
+plot(ES$dateRep,ES$deaths,type="b", main="Spain's Daily Deaths")
+```
+### Part 1 : Simple Non-moving Average
+#### create variables of the week and month of each observation:
+
+```{r}
+ES$Month <- as.Date(cut(ES$dateRep,
+  breaks = "month"))
+ES$Week <- as.Date(cut(ES$dateRep,
+  breaks = "week",
+  start.on.monday = FALSE)) # changes weekly break point to Sunday
+```
+```{r}
+ESMC <- aggregate(x=ES$cases,by=list(ES$Week),FUN=mean)
+ESMD <- aggregate(x=ES$deaths,by=list(ES$Week),FUN=mean)
+```
+```{r}
+plot(ES$dateRep,ES$cases,type="b",main="Spain's Daily and Weekly Mean Cases",col="red")
+lines(ESMC$Group.1,ESMC$x,col="blue")
+```
+
+```{r}
+plot(ES$dateRep,ES$deaths,type="b",main="Spain's Daily and Weekly Mean Deaths",col="red")
+lines(ESMD$Group.1,ESMD$x,col="blue")
+```
+
+### Calculate Monthly Mean Cases and Deaths
+
+```{r}
+ESMMC <- aggregate(x=ES$cases,by=list(ES$Month),FUN=mean)
+ESMMD <- aggregate(x=ES$deaths,by=list(ES$Month),FUN=mean)
+```
+```{r}
+plot(ES$dateRep,ES$cases,type="b",main="Spain's Daily and Monthly Mean Cases",col="red")
+lines(ESMMC$Group.1,ESMMC$x,col="blue")
+```
+
+```{r}
+plot(ES$dateRep,ES$deaths,type="b",main="Spain's Daily and Monthly Mean Deaths",col="red")
+lines(ESMMD$Group.1,ESMMD$x,col="blue")
+```
+
