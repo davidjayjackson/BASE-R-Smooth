@@ -17,7 +17,7 @@ rm(list=ls())
 EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-06.csv")
 EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
 EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
-ES <- subset(EUCOVID,geoId =="US" & cases >0)
+ES <- subset(EUCOVID,geoId =="ES" & cases >0)
 ES <- ES[c(1,5:8)]
 ```
 
@@ -29,6 +29,7 @@ plot(ES$dateRep,ES$deaths,type="b", main="Spain's Daily Deaths")
 ```
 ### Part 1 : Simple Non-moving Average
 #### create variables of the week and month of each observation:
+* https://www.r-bloggers.com/plot-weekly-or-monthly-totals-in-r/
 
 ```{r}
 ES$Month <- as.Date(cut(ES$dateRep,
