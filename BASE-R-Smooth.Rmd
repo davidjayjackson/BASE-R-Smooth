@@ -14,13 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, echo=FALSE}
 rm(list=ls())
-# EUP <-read.csv("../DATA/EU_top_10_pop..csv")
-# EUPOP <- subset(EUP,Population >=30000000)
-# EUPOP$Population <- as.factor(EUPOP$Population)
 EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-06.csv")
 EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
 EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
-ES <- subset(EUCOVID,geoId =="ES" & cases >0)
+ES <- subset(EUCOVID,geoId =="US" & cases >0)
 ES <- ES[c(1,5:8)]
 ```
 
