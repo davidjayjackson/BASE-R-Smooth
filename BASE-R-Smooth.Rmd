@@ -17,10 +17,11 @@ rm(list=ls())
 # EUP <-read.csv("../DATA/EU_top_10_pop..csv")
 # EUPOP <- subset(EUP,Population >=30000000)
 # EUPOP$Population <- as.factor(EUPOP$Population)
-EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-05.csv")
+EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-06.csv")
 EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
 EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
-ES <- subset(EUCOVID,geoId =="ES")
+ES <- subset(EUCOVID,geoId =="ES" & cases >0)
+ES <- ES[c(1,5:8)]
 ```
 
 ### Plot Spain's Daily Cases And Deaths
@@ -40,32 +41,32 @@ ES$Week <- as.Date(cut(ES$dateRep,
   start.on.monday = FALSE)) # changes weekly break point to Sunday
 ```
 ```{r}
-ESMC <- aggregate(x=ES$cases,by=list(ES$Week),FUN=mean)
-ESMD <- aggregate(x=ES$deaths,by=list(ES$Week),FUN=mean)
+ESMC <- aggregate(cases~Week,data=ES,mean)
+ESMD <- aggregate(deaths~Week,data=ES,mean)
 ```
 ```{r}
 plot(ES$dateRep,ES$cases,type="b",main="Spain's Daily and Weekly Mean Cases",col="red")
-lines(ESMC$Group.1,ESMC$x,col="blue")
+lines(ESMC$Week,ESMC$cases,col="blue")
 ```
 
 ```{r}
 plot(ES$dateRep,ES$deaths,type="b",main="Spain's Daily and Weekly Mean Deaths",col="red")
-lines(ESMD$Group.1,ESMD$x,col="blue")
+lines(ESMD$Week,ESMD$deaths,col="blue")
 ```
 
 ### Calculate Monthly Mean Cases and Deaths
 
 ```{r}
-ESMMC <- aggregate(x=ES$cases,by=list(ES$Month),FUN=mean)
-ESMMD <- aggregate(x=ES$deaths,by=list(ES$Month),FUN=mean)
+ESMMC <- aggregate(cases~Month,data=ES,mean)
+ESMMD <- aggregate(deaths~Month,data=ES,mean)
 ```
 ```{r}
 plot(ES$dateRep,ES$cases,type="b",main="Spain's Daily and Monthly Mean Cases",col="red")
-lines(ESMMC$Group.1,ESMMC$x,col="blue")
+lines(ESMMC$Month,ESMMC$cases,col="blue")
 ```
 
 ```{r}
 plot(ES$dateRep,ES$deaths,type="b",main="Spain's Daily and Monthly Mean Deaths",col="red")
-lines(ESMMD$Group.1,ESMMD$x,col="blue")
+lines(ESMMD$Month,ESMMD$deaths,col="blue")
 ```
 
