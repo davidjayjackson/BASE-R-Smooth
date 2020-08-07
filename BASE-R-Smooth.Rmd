@@ -1,7 +1,7 @@
 ---
 title: 'Base R: Smoothing Methods'
 author: "David J Jackson"
-date: "8/6/2020"
+date: "8/7/2020"
 output: 
   html_document: 
     fig_width: 9
@@ -14,10 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, echo=FALSE}
 rm(list=ls())
-EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-06.csv")
+EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-07.csv")
 EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
 EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
-ES <- subset(EUCOVID,geoId =="ES" & cases >0)
+ES <- subset(EUCOVID,geoId =="US" & cases >0)
 ES <- ES[c(1,5:8)]
 ```
 
@@ -67,4 +67,7 @@ lines(ESMMC$Month,ESMMC$cases,col="blue")
 plot(ES$dateRep,ES$deaths,type="b",main="Spain's Daily and Monthly Mean Deaths",col="red")
 lines(ESMMD$Month,ESMMD$deaths,col="blue")
 ```
+
+###  Part 2: Moving Avearge or Rolling Means
+In the interest of Full Disclosure, there are a couple Packages that have functions that calculate moving average or rolling mean including: zoo, forecast,pracma and TTR.
 
