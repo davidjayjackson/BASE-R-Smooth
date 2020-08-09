@@ -1,6 +1,29 @@
-##
-## Source: http://www.cookbook-r.com/Manipulating_data/Calculating_a_moving_average/
-##
+---
+title: 'Part 2: Smooth or Fitted Curve'
+author: "David J Jackson"
+date: "8/9/2020"
+output: 
+  html_document: 
+    fig_width: 9
+    fig_height: 7
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### In the interest of Full disclosure ...
+#### There are packages that have moivng average function build for instance:
+
+* Zoo, forecast, and pracma is a third.
+* There are three ways of adding rolling means to you code:
+* Embed the code directly
+* Use the source command to read a *.R script
+* Create and load a  library on Github
+* Source: http://www.cookbook-r.com/Manipulating_data/Calculating_a_moving_average/
+
+
+```{r}
 rm(list=ls())
 movingAverage <- function(x, n=1, centered=FALSE) {
   
@@ -53,36 +76,24 @@ movingAverage <- function(x, n=1, centered=FALSE) {
   # return sum divided by count
   s/count
 }
-## Book Title: Technical Analysis with R (second-edition)
-## URL: https://bookdown.org/kochiuyu/technical-analysis-with-r-second-edition/
-## Author: Ko Chiu Yu
-## 
-# myEMA <- function (price,n){
-#   ema <- c()
-#   ema[1:(n-1)] <- NA
-#   ema[n]<- mean(price[1:n])
-#   beta <- 2/(n+1)
-#   for (i in (n+1):length(price)){
-#     ema[i]<-beta * price[i] + 
-#       (1-beta) * ema[i-1]
-#   }
-#   ema <- reclass(ema,price)
-#   return(ema)
-# }
-##
-## Import ECDPC COVID-19 data
-##
+```
 
-EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-07.csv")
+```{r}
+
+EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-09.csv")
 EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
 EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
 ES <- subset(EUCOVID,geoId =="ES" & cases >0)
 ES <- ES[c(1,5:8)]
+```
+```{r}
 ## 
 ## Calculate Moivng Average
 ##
 ES$rollmean <- movingAverage(ES$cases,7)
 ES$rollmean2 <- movingAverage(ES$cases,28)
+```
+```{r}
 # ES$EMA <- myEMA(ES$cases,7)
 plot(ES$dateRep,ES$cases,type="l",main = "Comparing 7 Day Moving Average \n to 28 Day Moving Average",
      xlab="Date Reported",ylab="Mean Cases",col="red")
@@ -94,4 +105,5 @@ legend("topleft",
        lty = c(1, 1),
        cex = 0.5)
 grid()
+```
 

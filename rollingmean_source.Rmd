@@ -1,0 +1,48 @@
+---
+title: 'COVID-19: R Fitted Curve: Source'
+author: "David J Jackson"
+date: "8/9/2020"
+output: 
+  html_document: 
+    fig_width: 9
+    fig_height: 7
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+source("../DATA/movavg.R")
+```
+
+```{r}
+
+EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-09.csv")
+EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
+EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
+ES <- subset(EUCOVID,geoId =="ES" & cases >0)
+ES <- ES[c(1,5:8)]
+```
+```{r}
+## 
+## Calculate Moivng Average
+##
+ES$rollmean <- movingAverage(ES$cases,7)
+ES$rollmean2 <- movingAverage(ES$cases,28)
+```
+```{r}
+# ES$EMA <- myEMA(ES$cases,7)
+plot(ES$dateRep,ES$cases,type="l",main = "Comparing 7 Day Moving Average \n to 28 Day Moving Average",
+     xlab="Date Reported",ylab="Mean Cases",col="red")
+# lines(ES$dateRep,ES$rollmean,col="blue")
+ lines(ES$dateRep,ES$rollmean2,col="green")
+legend("topleft",
+       c("Daily Cases","7 Day Mov Av","28 Mov Avg."),
+       col=c("red","blue","green"),
+       lty = c(1, 1),
+       cex = 0.5)
+grid()
+```
+
+
+
