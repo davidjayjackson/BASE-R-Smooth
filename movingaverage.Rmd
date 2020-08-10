@@ -1,7 +1,7 @@
 ---
 title: 'Part 2: Smooth or Fitted Curve'
 author: "David J Jackson"
-date: "8/9/2020"
+date: "8/10/2020"
 output: 
   html_document: 
     fig_width: 9
@@ -13,74 +13,82 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ### In the interest of Full disclosure ...
-#### There are packages that have moivng average function build for instance:
+#### There are packages that have moivng average function build in:
 
-* Zoo, forecast, and pracma is a third.
+* Zoo, forecast,TTR and pracma.
 * There are three ways of adding rolling means to you code:
 * Embed the code directly
 * Use the source command to read a *.R script
-* Create and load a  library on Github
-* Source: http://www.cookbook-r.com/Manipulating_data/Calculating_a_moving_average/
-
+* Create and load a  package on Github
 
 ```{r}
 rm(list=ls())
+```
+
+```{r}
+# x: the vector
+# n: the number of samples
+# centered: if FALSE, then average current sample and previous (n-1) samples
+#           if TRUE, then average symmetrically in past and future. (If n is even, use one more sample from future.)
 movingAverage <- function(x, n=1, centered=FALSE) {
-  
-  if (centered) {
-    before <- floor  ((n-1)/2)
-    after  <- ceiling((n-1)/2)
-  } else {
-    before <- n-1
-    after  <- 0
-  }
-  
-  # Track the sum and count of number of non-NA items
-  s     <- rep(0, length(x))
-  count <- rep(0, length(x))
-  
-  # Add the centered data 
-  new <- x
-  # Add to count list wherever there isn't a 
-  count <- count + !is.na(new)
-  # Now replace NA_s with 0_s and add to total
-  new[is.na(new)] <- 0
-  s <- s + new
-  
-  # Add the data from before
-  i <- 1
-  while (i <= before) {
-    # This is the vector with offset values to add
-    new   <- c(rep(NA, i), x[1:(length(x)-i)])
     
+    if (centered) {
+        before <- floor  ((n-1)/2)
+        after  <- ceiling((n-1)/2)
+    } else {
+        before <- n-1
+        after  <- 0
+    }
+
+    # Track the sum and count of number of non-NA items
+    s     <- rep(0, length(x))
+    count <- rep(0, length(x))
+    
+    # Add the centered data 
+    new <- x
+    # Add to count list wherever there isn't a 
     count <- count + !is.na(new)
+    # Now replace NA_s with 0_s and add to total
     new[is.na(new)] <- 0
     s <- s + new
     
-    i <- i+1
-  }
-  
-  # Add the data from after
-  i <- 1
-  while (i <= after) {
-    # This is the vector with offset values to add
-    new   <- c(x[(i+1):length(x)], rep(NA, i))
+    # Add the data from before
+    i <- 1
+    while (i <= before) {
+        # This is the vector with offset values to add
+        new   <- c(rep(NA, i), x[1:(length(x)-i)])
+
+        count <- count + !is.na(new)
+        new[is.na(new)] <- 0
+        s <- s + new
+        
+        i <- i+1
+    }
+
+    # Add the data from after
+    i <- 1
+    while (i <= after) {
+        # This is the vector with offset values to add
+        new   <- c(x[(i+1):length(x)], rep(NA, i))
+       
+        count <- count + !is.na(new)
+        new[is.na(new)] <- 0
+        s <- s + new
+        
+        i <- i+1
+    }
     
-    count <- count + !is.na(new)
-    new[is.na(new)] <- 0
-    s <- s + new
-    
-    i <- i+1
-  }
-  
-  # return sum divided by count
-  s/count
+    # return sum divided by count
+    s/count
 }
+
+
+
 ```
 
 ```{r}
 
-EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-09.csv")
+EUCOVID <- read.csv("../DATA/COVID-19-ECDCP-2020-08-10.csv")
 EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
 EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
 ES <- subset(EUCOVID,geoId =="ES" & cases >0)
@@ -90,11 +98,10 @@ ES <- ES[c(1,5:8)]
 ## 
 ## Calculate Moivng Average
 ##
-ES$rollmean <- movingAverage(ES$cases,7)
-ES$rollmean2 <- movingAverage(ES$cases,28)
+ES$rollmean <- movingAverage(ES$cases,7,center=TRUE)
+ES$rollmean2 <- movingAverage(ES$cases,28,center=TRUE)
 ```
 ```{r}
-# ES$EMA <- myEMA(ES$cases,7)
 plot(ES$dateRep,ES$cases,type="l",main = "Comparing 7 Day Moving Average \n to 28 Day Moving Average",
      xlab="Date Reported",ylab="Mean Cases",col="red")
 lines(ES$dateRep,ES$rollmean,col="blue")
@@ -102,6 +109,22 @@ lines(ES$dateRep,ES$rollmean2,col="green")
 legend("topleft",
        c("Daily Cases","7 Day Mov Av","28 Mov Avg."),
        col=c("red","blue","green"),
+       lty = c(1, 1),
+       cex = 0.5)
+grid()
+```
+
+## Plot of 7 and 28 Day Moving Averages
+
+
+```{r}
+plot(ES$dateRep,ES$rollmean,type="l",main = "Comparing 7 Day Moving Average \n to 28 Day Moving Average",
+     xlab="Date Reported",ylab="Mean Cases",col="red")
+lines(ES$dateRep,ES$rollmean2,col="blue")
+
+legend("topleft",
+       c("7 Day Mov Avg,","28 Mov Avg."),
+       col=c("red","blue"),
        lty = c(1, 1),
        cex = 0.5)
 grid()

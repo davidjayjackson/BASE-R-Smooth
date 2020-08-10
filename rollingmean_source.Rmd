@@ -11,6 +11,16 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+### In the interest of Full disclosure ...
+#### There are packages that have moivng average function build in:
+
+* Zoo, forecast,TTR and pracma.
+* There are three ways of adding rolling means to you code:
+* Embed the code directly
+* Use the source command to read a *.R script
+* Create and load a  package on Github
+
+
 ```{r}
 source("../DATA/movavg.R")
 ```
@@ -27,22 +37,29 @@ ES <- ES[c(1,5:8)]
 ## 
 ## Calculate Moivng Average
 ##
-ES$rollmean <- movingAverage(ES$cases,7)
-ES$rollmean2 <- movingAverage(ES$cases,28)
+ES$rollmean <- movingAverage(ES$cases,7,center=TRUE)
+ES$rollmean2 <- movingAverage(ES$cases,28,center=TRUE)
 ```
 ```{r}
-# ES$EMA <- myEMA(ES$cases,7)
 plot(ES$dateRep,ES$cases,type="l",main = "Comparing 7 Day Moving Average \n to 28 Day Moving Average",
      xlab="Date Reported",ylab="Mean Cases",col="red")
-# lines(ES$dateRep,ES$rollmean,col="blue")
+lines(ES$dateRep,ES$rollmean,col="blue")
  lines(ES$dateRep,ES$rollmean2,col="green")
 legend("topleft",
        c("Daily Cases","7 Day Mov Av","28 Mov Avg."),
        col=c("red","blue","green"),
        lty = c(1, 1),
-       cex = 0.5)
+       cex = 0.8)
 grid()
 ```
-
-
-
+```{r}
+plot(ES$dateRep,ES$rollmean,type="l",main = "Comparing 7 Day Moving Average \n to 28 Day Moving Average",
+     xlab="Date Reported",ylab="Mean Cases",col="red")
+lines(ES$dateRep,ES$rollmean2,col="blue")
+legend("topleft",
+       c("7 Day Mov Av","28 Mov Avg."),
+       col=c("red","blue"),
+       lty = c(1, 1),
+       cex = 0.8)
+grid()
+```

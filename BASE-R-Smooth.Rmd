@@ -1,7 +1,7 @@
 ---
 title: 'Base R: Smoothing Methods'
 author: "David J Jackson"
-date: "8/7/2020"
+date: "8/10/2020"
 output: 
   html_document: 
     fig_width: 9
@@ -12,12 +12,21 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+### In the interest of Full disclosure ...
+#### There are packages that have moivng average function build in:
+
+* Zoo, forecast,TTR and pracma.
+* There are three ways of adding rolling means to you code:
+* Embed the code directly
+* Use the source command to read a *.R script
+* Create and load a  package on Github
+
 ```{r, echo=FALSE}
 rm(list=ls())
-EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-07.csv")
+EUCOVID <- read.csv("../DATA/COVID-19-ECDCP-2020-08-10.csv")
 EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
 EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
-ES <- subset(EUCOVID,geoId =="US" & cases >0)
+ES <- subset(EUCOVID,geoId =="ES" & cases >0)
 ES <- ES[c(1,5:8)]
 ```
 
