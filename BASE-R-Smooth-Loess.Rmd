@@ -1,0 +1,68 @@
+---
+title: "Part 4: BASE-R Smoothing with Loess"
+author: "David J Jackson"
+date: "8/12/2020"
+output: 
+  html_document: 
+    fig_width: 9
+    fig_height: 7
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(RSQLite)
+```
+
+### Part 4
+
+```{r}
+rm(list=ls())
+db <- db <- dbConnect(RSQLite::SQLite(),dbname= "../COVIDDB/COVID.sqlite3")
+df <- dbGetQuery(db,"select * from ECDC")
+df$Reported <- as.Date(df$Reported)
+names(df)
+```
+```{r}
+db2 <- aggregate(Cases~Reported,data=df,FUN=sum)
+db3 <- aggregate(Deaths~Reported,data=df,FUN=sum)
+```
+```{r}
+plot(db2$Reported,db2$Cases,type="l",main="Plot of Cases by Date")
+```
+```{r}
+plot(db3$Reported,db3$Deaths,type="l",main="Plot of Deaths by Date")
+```
+
+### LOESS (locally estimated scatterplot smoothing)
+#### Source Code: http://r-statistics.co/Loess-Regression-With-R.html
+
+```{r}
+db2$index <- 1:nrow(db2)
+loess1 <- loess(db2$Cases~db2$index)
+loess2 <- loess(db2$Cases~db2$index,span=0.25)
+loess3 <- loess(db2$Cases~db2$index,span=0.50)
+loess4 <- loess(db2$Cases~db2$index,span=0.75)
+
+```
+```{r}
+db2$sm00 <- predict(loess1) 
+db2$sm25 <- predict(loess2) 
+db2$sm50 <- predict(loess3)
+db2$sm75 <- predict(loess4)
+```
+
+#### Plot COVID9-19 Cases With Loess Smoothed Fit.
+
+```{r}
+plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess Smoothing and Prediction", xlab="Date", ylab="Total Cases")
+lines(db2$Reported,db2$sm00, col="red")
+
+plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.25) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
+lines(db2$Reported,db2$sm25, col="green")
+
+plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.50) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
+lines(db2$Reported,db2$sm50, col="blue")
+
+plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.75) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
+lines(db2$Reported,db2$sm75, col="blue")
+```
