@@ -21,6 +21,7 @@ library(RSQLite)
 rm(list=ls())
 db <- db <- dbConnect(RSQLite::SQLite(),dbname= "../COVIDDB/COVID.sqlite3")
 df <- dbGetQuery(db,"select * from ECDC")
+df <- subset(df,Countries =="Spain" & Cases >0 )
 df$Reported <- as.Date(df$Reported)
 names(df)
 ```
