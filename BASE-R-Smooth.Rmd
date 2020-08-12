@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, echo=FALSE}
 rm(list=ls())
-EUCOVID <- read.csv("../DATA/COVID-19-ECDCP-2020-08-10.csv")
+EUCOVID <- read.csv("../DATA/COVID-19-ECDPC-2020-08-11.csv")
 EUCOVID$dateRep <- gsub("/","-",EUCOVID$dateRep)
 EUCOVID$dateRep <- as.Date(EUCOVID$dateRep,format="%m-%d-%Y")
 ES <- subset(EUCOVID,geoId =="ES" & cases >0)
@@ -79,4 +79,8 @@ lines(ESMMD$Month,ESMMD$deaths,col="blue")
 
 ###  Part 2: Moving Avearge or Rolling Means
 In the interest of Full Disclosure, there are a couple Packages that have functions that calculate moving average or rolling mean including: zoo, forecast,pracma and TTR.
+
+```{r}
+xloess <- loess(ES$dateRep~ES$cases)
+```
 
