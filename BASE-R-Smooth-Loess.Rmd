@@ -1,7 +1,7 @@
 ---
 title: "Part 4: BASE-R Smoothing with Loess"
 author: "David J Jackson"
-date: "8/12/2020"
+date: "8/22/2020"
 output: 
   html_document: 
     fig_width: 9
@@ -21,7 +21,7 @@ library(RSQLite)
 rm(list=ls())
 db <- db <- dbConnect(RSQLite::SQLite(),dbname= "../COVIDDB/COVID.sqlite3")
 df <- dbGetQuery(db,"select * from ECDC")
-df <- subset(df,Countries =="Spain" & Cases >0 )
+df <- subset(df,Countries =="USA" & Cases >0 )
 df$Reported <- as.Date(df$Reported)
 names(df)
 ```
@@ -60,16 +60,16 @@ plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(default) Smoothing and
 lines(db2$Reported,db2$sm00, col="red")
 
 plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.25) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
-lines(db2$Reported,db2$sm25, col="green")
+lines(db2$Reported,db2$sm25, col="red")
 
 plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.50) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
-lines(db2$Reported,db2$sm50, col="blue")
+lines(db2$Reported,db2$sm50, col="red")
 
 plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.75) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
-lines(db2$Reported,db2$sm75, col="blue")
+lines(db2$Reported,db2$sm75, col="red")
 ```
 
-#### Predict Loess for Deaths
+#### Predict Lwoess for Deaths
 
 ```{r}
 db3$index <- 1:nrow(db3)
@@ -92,13 +92,13 @@ plot(db3$Reported,db3$Deaths, type="l", main="Deaths: Loess(default) Smoothing a
 lines(db3$Reported,db3$sm00, col="red")
 
 plot(db3$Reported,db3$Deaths, type="l", main="Deaths: Loess(0.25) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
-lines(db3$Reported,db3$sm25, col="green")
+lines(db3$Reported,db3$sm25, col="red")
 
 plot(db3$Reported,db3$Deaths, type="l", main="Deaths: Loess(0.50) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
-lines(db3$Reported,db3$sm50, col="blue")
+lines(db3$Reported,db3$sm50, col="red")
 
 plot(db3$Reported,db3$Deaths, type="l", main="Deaths: Loess(0.75) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
-lines(db3$Reported,db3$sm75, col="blue")
+lines(db3$Reported,db3$sm75, col="red")
 ```
 
 
