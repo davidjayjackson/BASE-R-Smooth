@@ -58,15 +58,16 @@ db2$sm75 <- predict(loess4)
 ```{r}
 plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(default) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
 lines(db2$Reported,db2$sm00, col="red")
-
+grid(col="black")
 plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.25) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
 lines(db2$Reported,db2$sm25, col="red")
-
+grid(col="black")
 plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.50) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
 lines(db2$Reported,db2$sm50, col="red")
-
+grid(col="black")
 plot(db2$Reported,db2$Cases, type="l", main="Cases: Loess(0.75) Smoothing and Prediction", xlab="Date", ylab="Total Cases")
 lines(db2$Reported,db2$sm75, col="red")
+grid(col="black")
 ```
 
 #### Predict Lwoess for Deaths

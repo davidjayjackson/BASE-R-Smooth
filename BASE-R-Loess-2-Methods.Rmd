@@ -1,0 +1,61 @@
+---
+title: "Loess/Lowess Fitted Curves."
+author: "David RJ Jackson"
+date: "10/11/2020"
+output: 
+  html_document: 
+    fig_width: 9
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(scales)
+library(RSQLite)
+```
+
+### LOESS (locally estimated scatterplot smoothing)
+#### Source Code: http://r-statistics.co/Loess-Regression-With-R.html
+#### Webpage Author: Selva Prabhakaran
+
+```{r}
+rm(list=ls())
+db <- db <- dbConnect(RSQLite::SQLite(),dbname= "../COVIDDB/COVID.sqlite3")
+df <- dbGetQuery(db,"select * from ECDC")
+df$Reported <- as.Date(df$Reported)
+CASES <- subset(df,Countries =="USA" & Reported >="2020-01-31" )
+DEATHS <- subset(df,Countries =="USA" & Reported >="2020-03-03" )
+
+```
+
+#### LOESS (locally estimated scatterplot smoothing) and LOWESS (locally weighted scatterplot smoothing).
+
+### Plot of Daily Cases w/ Loess for US
+
+```{r}
+ggplot(CASES) + geom_point(aes(x=Reported,y=Cases)) +
+  geom_smooth(aes(x=Reported,y=Cases,col="Loess")) + 
+  geom_line(aes(x=Reported,y=Cases)) +
+  labs(title="Loess Fitted Curve (using default span)")
+```
+```{r}
+ggplot(CASES) + geom_point(aes(x=Reported,y=Cases)) +
+  geom_smooth(aes(x=Reported,y=Cases,col="Loess"),span=0.25) +
+  geom_line(aes(x=Reported,y=Cases)) +
+  labs(title="Loess Fitted Curve (Span=0.25)")
+```
+
+### Plot Daily Deaths w/ Loess Curve
+
+```{r}
+ggplot(DEATHS) + geom_point(aes(x=Reported,y=Deaths)) +
+  geom_smooth(aes(x=Reported,y=Deaths,col="Loess")) + 
+  geom_line(aes(x=Reported,y=Deaths)) +
+  labs(title="Loess Fitted Curve (using default span)")
+```
+```{r}
+ggplot(DEATHS) + geom_point(aes(x=Reported,y=Deaths)) +
+  geom_smooth(aes(x=Reported,y=Deaths,col="Loess"),span=0.25) +
+  geom_line(aes(x=Reported,y=Deaths)) +
+  labs(title="Loess Fitted Curve (Span=0.25)")
+```
